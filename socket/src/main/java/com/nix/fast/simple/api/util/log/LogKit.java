@@ -1,7 +1,6 @@
 package com.nix.fast.simple.api.util.log;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Kiss
@@ -9,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public final class LogKit {
-    private static final Log log = LogFactory.getLog("nix");
+    private static final Logger log = LoggerFactory.getLogger("nix");
     private final static String getClassName(Class clazz){
         return clazz.getName() + " : ";
     }
@@ -22,7 +21,7 @@ public final class LogKit {
     public final static void error(Class clazz,String msg){
         log.error(getClassName(clazz) + msg);
     }
-    public static Log getLog(Class clazz) {
-        return LogFactory.getLog(clazz);
+    public static Logger getLog(Class clazz) {
+        return LoggerFactory.getLogger(clazz);
     }
 }

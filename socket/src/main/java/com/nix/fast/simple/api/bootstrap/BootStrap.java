@@ -4,7 +4,7 @@ import com.nix.fast.simple.api.util.AcceptTask;
 import com.nix.fast.simple.api.util.ServerConfig;
 import com.nix.fast.simple.api.util.SocketTreadPool;
 import com.nix.fast.simple.api.util.log.LogKit;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,11 +19,11 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/08/23 13:56
  */
 public class BootStrap {
-    private final Log logger = LogKit.getLog(BootStrap.class);
+    private final Logger logger = LogKit.getLog(BootStrap.class);
     private final Selector selector = Selector.open();
     private final ServerSocketChannel server = ServerSocketChannel.open();
     private final static Object SELECTOR_CLOCK = new Object();
-    private final ThreadPoolExecutor selectorPool = new ThreadPoolExecutor(30, 30, 0, TimeUnit.SECONDS,
+    private final ThreadPoolExecutor selectorPool = new ThreadPoolExecutor(20, 20, 0, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(200),
             r -> {
                 Thread thread = new Thread(r);
@@ -40,21 +40,18 @@ public class BootStrap {
         //bind accept port
         server.configureBlocking(false);
         server.bind(new InetSocketAddress(ServerConfig.port));
-        logger.info("server bind port success {}");
+        logger.info("server bind port success {}",ServerConfig.port);
         server.register(selector, SelectionKey.OP_ACCEPT);
         logger.info("start...");
         while (true) {
             selector.select();
-            selectorPool.execute(() -> {
-                Iterator<SelectionKey> iterator;
-                synchronized (SELECTOR_CLOCK) {
-                    iterator = selector.selectedKeys().iterator();
-                }
-                while(iterator.hasNext()){
-                    SelectionKey key = iterator.next();
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while(iterator.hasNext()){
+                SelectionKey key = iterator.next();
+//                selectorPool.execute(() -> {
                     if (key.isReadable()) {
                         try {
-                            SocketTreadPool.execute(new AcceptTask((SocketChannel) key.channel()));
+                            SocketTreadPool.execute(new AcceptTask(key));
                         }catch (Exception e) {
                             logger.error("处理请求失败");
                         }
@@ -65,11 +62,11 @@ public class BootStrap {
                             SocketChannel channel = serverSocketChannel.accept();
                             channel.configureBlocking(false);
                             channel.register(selector,SelectionKey.OP_READ);
-                        } catch (Exception e) { }
+                        } catch (Exception ignored) { }
                     }
-                    iterator.remove();
-                }
-            });
+//                });
+                iterator.remove();
+            }
         }
     }
 }

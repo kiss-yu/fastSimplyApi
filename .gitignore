@@ -1,1 +1,26 @@
-# Created by .ignore support plugin (hsz.mobi)
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Idea Project Files #
+*.iml
+*gitignore
+*.classpath
+*.project
+*/.settings/
+/.settings/
+# Image Files #
+*.jpg
+*.png
+*.gif
+*.gz
+/.idea/
+/bin/
+*.log
+/jfinalshop-4.0-pay/src/test/
+target/
+logs/
+archive.zip

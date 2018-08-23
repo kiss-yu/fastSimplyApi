@@ -1,7 +1,7 @@
 package com.nix.fast.simple.api.util;
 
 import com.nix.fast.simple.api.util.log.LogKit;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -11,12 +11,12 @@ import java.util.concurrent.*;
  * @date 2018/08/23 14:01
  */
 public final class SocketTreadPool {
-    private final static Log LOGGER = LogKit.getLog(SocketTreadPool.class);
+    private final static Logger LOGGER = LogKit.getLog(SocketTreadPool.class);
     private static final LinkedBlockingDeque<Runnable> BLOCKING_DEQUE = new LinkedBlockingDeque<>(100);
     private static final RejectedExecutionHandler REJECTED_EXECUTION_HANDLER = (r, executor) -> {
         LOGGER.warn("请求响应失败");
     };
-    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(0, 500, 10, TimeUnit.SECONDS,
+    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(500, 500, 10, TimeUnit.SECONDS,
             BLOCKING_DEQUE,r -> {
         Thread thread = new Thread(r);
         thread.setName("socket");

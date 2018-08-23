@@ -1,6 +1,7 @@
 package com.nix.fast.simple.api.util;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 
@@ -10,22 +11,23 @@ import java.nio.charset.Charset;
  */
 public class AcceptTask implements Runnable{
 
-    private final SocketChannel socketChannel;
+    private final SelectionKey key;
 
-    public AcceptTask(SocketChannel socketChannel) {
-        this.socketChannel = socketChannel;
+    public AcceptTask(SelectionKey key) {
+        this.key = key;
     }
-
     @Override
     public void run() {
+        final SocketChannel socketChannel = (SocketChannel) key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         try {
             while (socketChannel.read(buffer) > 0) {
-
             }
-            System.out.println(buffer.capacity());
-        }catch (Exception e) {
+            ByteBuffer write = ByteBuffer.wrap("hello world".getBytes());
+            socketChannel.write(write);
+        }catch (Exception ignored) {
 
         }
+        key.cancel();
     }
 }
