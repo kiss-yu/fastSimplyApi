@@ -12,7 +12,12 @@ import java.nio.channels.SocketChannel;
 public class Client {
     public static void main(String[] args) throws IOException {
         SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress(8888));
-        socketChannel.write(ByteBuffer.wrap("hello client".getBytes()));
+        StringBuffer byteBuffer = new StringBuffer();
+        for (int i = 0;i < 1024;i ++) {
+            byteBuffer.append(i + ",");
+        }
+        System.out.println(byteBuffer);
+        socketChannel.write(ByteBuffer.wrap(byteBuffer.toString().getBytes()));
         socketChannel.close();
     }
 }

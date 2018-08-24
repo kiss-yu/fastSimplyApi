@@ -2,7 +2,6 @@ package com.nix.fast.simple.api.pipeline;
 
 import com.nix.fast.simple.api.context.Context;
 import com.nix.fast.simple.api.pipeline.processor.Processor;
-import com.sun.istack.internal.NotNull;
 
 /**
  * @author Kiss
@@ -42,7 +41,7 @@ public class Pipeline {
     /**
      * 注册Processor
      * */
-    public synchronized Pipeline registerProcessor(@NotNull Processor processor) {
+    public synchronized Pipeline registerProcessor(Processor processor) {
         if (processor == null) {
             return this;
         }

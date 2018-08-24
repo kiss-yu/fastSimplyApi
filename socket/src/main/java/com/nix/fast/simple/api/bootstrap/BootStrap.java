@@ -49,6 +49,7 @@ public class BootStrap {
             while(iterator.hasNext()){
                 SelectionKey key = iterator.next();
 //                selectorPool.execute(() -> {
+                try {
                     if (key.isReadable()) {
                         try {
                             SocketTreadPool.execute(new AcceptTask(key));
@@ -64,6 +65,8 @@ public class BootStrap {
                             channel.register(selector,SelectionKey.OP_READ);
                         } catch (Exception ignored) { }
                     }
+                }catch (Exception ignored) {}
+
 //                });
                 iterator.remove();
             }
