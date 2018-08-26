@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.*;
 import java.util.Iterator;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Kiss
@@ -23,15 +20,6 @@ public class BootStrap {
     private final Selector selector = Selector.open();
     private final ServerSocketChannel server = ServerSocketChannel.open();
     private final static Object SELECTOR_CLOCK = new Object();
-    private final ThreadPoolExecutor selectorPool = new ThreadPoolExecutor(20, 20, 0, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(200),
-            r -> {
-                Thread thread = new Thread(r);
-                thread.checkAccess();
-                thread.setName("selector thread");
-                thread.setPriority(Thread.MAX_PRIORITY);
-                return thread;
-            });
     public BootStrap() throws IOException {
 
     }
@@ -48,7 +36,6 @@ public class BootStrap {
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
             while(iterator.hasNext()){
                 SelectionKey key = iterator.next();
-//                selectorPool.execute(() -> {
                 try {
                     if (key.isReadable()) {
                         try {
@@ -66,8 +53,6 @@ public class BootStrap {
                         } catch (Exception ignored) { }
                     }
                 }catch (Exception ignored) {}
-
-//                });
                 iterator.remove();
             }
         }

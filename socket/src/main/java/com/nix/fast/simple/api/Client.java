@@ -14,7 +14,7 @@ public class Client {
     public static void main(String[] args) throws IOException {
         SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress(8888));
         StringBuffer byteBuffer = new StringBuffer();
-        for (int i = 0;i < 1023;i ++) {
+        for (int i = 0;i < 1024*10;i ++) {
             byteBuffer.append(i + ",");
         }
         System.out.println(byteBuffer);

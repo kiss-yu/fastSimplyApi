@@ -21,7 +21,7 @@ public class AcceptTask implements Runnable{
     @Override
     public void run() {
         final SocketChannel socketChannel = (SocketChannel) key.channel();
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        ByteBuffer buffer = ByteBuffer.allocate(512);
         SocketByteBuff socketByteBuff = new SocketByteBuff();
         try {
             int len;
@@ -33,9 +33,11 @@ public class AcceptTask implements Runnable{
                 return;
             }
             //将请求数据交给通道处理返回内容会写给客户端
-            socketChannel.write(ByteBuffer.wrap(pipeline.inOpened(HttpRequest.createRequest(socketByteBuff.getBytes())).httpContentBytes()));
+            System.out.println("-------");
+            System.out.println(new String(socketByteBuff.getBytes()));
+//            socketChannel.write(ByteBuffer.wrap(pipeline.inOpened(HttpRequest.createRequest(socketByteBuff.getBytes())).httpContentBytes()));
         }catch (Exception ignored) {
-
+            ignored.printStackTrace();
         }
         key.cancel();
     }

@@ -12,7 +12,7 @@ import java.util.concurrent.*;
  */
 public final class SocketTreadPool {
     private final static Logger LOGGER = LogKit.getLog(SocketTreadPool.class);
-    private static final LinkedBlockingDeque<Runnable> BLOCKING_DEQUE = new LinkedBlockingDeque<>(100);
+    private static final LinkedBlockingDeque<Runnable> BLOCKING_DEQUE = new LinkedBlockingDeque<>(10000);
     private static final RejectedExecutionHandler REJECTED_EXECUTION_HANDLER = (r, executor) -> {
         LOGGER.warn("请求响应失败");
     };
