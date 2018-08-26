@@ -1,11 +1,10 @@
 package com.nix.fast.simple.api.util;
-
 import com.nix.fast.simple.api.pipeline.Pipeline;
+import com.nix.simple.api.http.request.HttpRequest;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
 
 /**
  * @author Kiss
@@ -33,10 +32,10 @@ public class AcceptTask implements Runnable{
             if (socketByteBuff.isEmpty()) {
                 return;
             }
-            System.out.println("-------");
-            System.out.println(new String(socketByteBuff.getBytes()));
-            pipeline.inOpened();
+            //将请求数据交给通道处理返回内容会写给客户端
+            socketChannel.write(ByteBuffer.wrap(pipeline.inOpened(HttpRequest.createRequest(socketByteBuff.getBytes())).httpContentBytes()));
         }catch (Exception ignored) {
+
         }
         key.cancel();
     }

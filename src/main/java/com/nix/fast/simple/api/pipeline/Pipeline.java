@@ -2,6 +2,9 @@ package com.nix.fast.simple.api.pipeline;
 
 import com.nix.fast.simple.api.context.Context;
 import com.nix.fast.simple.api.pipeline.processor.Processor;
+import com.nix.fast.simple.api.util.ContextUtil;
+import com.nix.simple.api.http.request.Request;
+import com.nix.simple.api.http.response.Response;
 
 /**
  * @author Kiss
@@ -27,13 +30,15 @@ public class Pipeline {
     /**
      * 头部开始执行
      * */
-    public Context inOpened() {
-        return null;
+    public Response inOpened(Request request) {
+        Context context = ContextUtil.request2Context(request);
+        outOpened(context);
+        return ContextUtil.cotext2Response(context);
     }
     /**
      * 尾部开始执行
      * */
-    public Context outOpened() {
+    public Context outOpened(Context context) {
         return null;
     }
 
