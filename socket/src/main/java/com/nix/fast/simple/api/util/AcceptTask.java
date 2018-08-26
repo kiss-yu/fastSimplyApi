@@ -22,42 +22,47 @@ public class AcceptTask implements Runnable{
     @Override
     public void run() {
         final SocketChannel socketChannel = (SocketChannel) key.channel();
-        ByteBuffer buffer = ByteBuffer.allocate(1024*6);
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
         SocketByteBuff socketByteBuff = new SocketByteBuff();
         try {
-            while (socketChannel.read(buffer) > 0) {
-                socketByteBuff.put(buffer.array(),buffer.limit());
+            int len;
+            while ((len = socketChannel.read(buffer)) >= 0) {
+                socketByteBuff.put(buffer.array(),len);
                 buffer.clear();
             }
-//            System.out.println(new String(socketByteBuff.getBytes()));
+            if (socketByteBuff.isEmpty()) {
+                return;
+            }
+            System.out.println("-------");
+            System.out.println(new String(socketByteBuff.getBytes()));
             pipeline.inOpened();
         }catch (Exception ignored) {
-
         }
         key.cancel();
     }
     private class SocketByteBuff {
-        private byte[] data = new byte[512];
         private int position = 0;
         private int size = 512;
+        private volatile byte[] data = new byte[size];
         public synchronized void put(byte[] bytes,int length) {
-            System.out.println("-----------");
-            System.out.println(new String(bytes,length));
-            System.out.println("-----------");
             if (position + length > size) {
-                reset();
-                put(bytes,length);
+                while (reset() < position + length){};
             }
             System.arraycopy(bytes,0,data,position,length);
             position += length;
         }
-        private void reset() {
-            byte[] back = new byte[size];
-            System.arraycopy(back,0,data,size,size);
+        private int reset() {
+            byte[] bak = new byte[size * 2];
+            System.arraycopy(data,0,bak,0,size);
+            data = bak;
             size *= 2;
+            return size;
         }
         public byte[] getBytes() {
             return data;
+        }
+        public boolean isEmpty() {
+            return position == 0;
         }
     }
 }
